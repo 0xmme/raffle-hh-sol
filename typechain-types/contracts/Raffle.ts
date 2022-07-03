@@ -33,6 +33,7 @@ export interface RaffleInterface extends utils.Interface {
     "enterRaffle()": FunctionFragment;
     "getEntranceFee()": FunctionFragment;
     "getPlayer(uint256)": FunctionFragment;
+    "getRecentWinner()": FunctionFragment;
     "rawFulfillRandomWords(uint256,uint256[])": FunctionFragment;
     "requestRandomWinner()": FunctionFragment;
   };
@@ -42,6 +43,7 @@ export interface RaffleInterface extends utils.Interface {
       | "enterRaffle"
       | "getEntranceFee"
       | "getPlayer"
+      | "getRecentWinner"
       | "rawFulfillRandomWords"
       | "requestRandomWinner"
   ): FunctionFragment;
@@ -57,6 +59,10 @@ export interface RaffleInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getPlayer",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRecentWinner",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "rawFulfillRandomWords",
@@ -77,6 +83,10 @@ export interface RaffleInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getPlayer", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "getRecentWinner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "rawFulfillRandomWords",
     data: BytesLike
   ): Result;
@@ -87,9 +97,13 @@ export interface RaffleInterface extends utils.Interface {
 
   events: {
     "RaffleEnter(address)": EventFragment;
+    "RandomWordRequest(uint256)": EventFragment;
+    "WinnerPicked(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "RaffleEnter"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RandomWordRequest"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WinnerPicked"): EventFragment;
 }
 
 export interface RaffleEnterEventObject {
@@ -98,6 +112,24 @@ export interface RaffleEnterEventObject {
 export type RaffleEnterEvent = TypedEvent<[string], RaffleEnterEventObject>;
 
 export type RaffleEnterEventFilter = TypedEventFilter<RaffleEnterEvent>;
+
+export interface RandomWordRequestEventObject {
+  requestId: BigNumber;
+}
+export type RandomWordRequestEvent = TypedEvent<
+  [BigNumber],
+  RandomWordRequestEventObject
+>;
+
+export type RandomWordRequestEventFilter =
+  TypedEventFilter<RandomWordRequestEvent>;
+
+export interface WinnerPickedEventObject {
+  winner: string;
+}
+export type WinnerPickedEvent = TypedEvent<[string], WinnerPickedEventObject>;
+
+export type WinnerPickedEventFilter = TypedEventFilter<WinnerPickedEvent>;
 
 export interface Raffle extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -137,6 +169,8 @@ export interface Raffle extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getRecentWinner(overrides?: CallOverrides): Promise<[string]>;
+
     rawFulfillRandomWords(
       requestId: PromiseOrValue<BigNumberish>,
       randomWords: PromiseOrValue<BigNumberish>[],
@@ -159,6 +193,8 @@ export interface Raffle extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getRecentWinner(overrides?: CallOverrides): Promise<string>;
+
   rawFulfillRandomWords(
     requestId: PromiseOrValue<BigNumberish>,
     randomWords: PromiseOrValue<BigNumberish>[],
@@ -179,6 +215,8 @@ export interface Raffle extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    getRecentWinner(overrides?: CallOverrides): Promise<string>;
+
     rawFulfillRandomWords(
       requestId: PromiseOrValue<BigNumberish>,
       randomWords: PromiseOrValue<BigNumberish>[],
@@ -193,6 +231,20 @@ export interface Raffle extends BaseContract {
       player?: PromiseOrValue<string> | null
     ): RaffleEnterEventFilter;
     RaffleEnter(player?: PromiseOrValue<string> | null): RaffleEnterEventFilter;
+
+    "RandomWordRequest(uint256)"(
+      requestId?: PromiseOrValue<BigNumberish> | null
+    ): RandomWordRequestEventFilter;
+    RandomWordRequest(
+      requestId?: PromiseOrValue<BigNumberish> | null
+    ): RandomWordRequestEventFilter;
+
+    "WinnerPicked(address)"(
+      winner?: PromiseOrValue<string> | null
+    ): WinnerPickedEventFilter;
+    WinnerPicked(
+      winner?: PromiseOrValue<string> | null
+    ): WinnerPickedEventFilter;
   };
 
   estimateGas: {
@@ -206,6 +258,8 @@ export interface Raffle extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getRecentWinner(overrides?: CallOverrides): Promise<BigNumber>;
 
     rawFulfillRandomWords(
       requestId: PromiseOrValue<BigNumberish>,
@@ -229,6 +283,8 @@ export interface Raffle extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getRecentWinner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     rawFulfillRandomWords(
       requestId: PromiseOrValue<BigNumberish>,
