@@ -30,30 +30,66 @@ import type {
 
 export interface RaffleInterface extends utils.Interface {
   functions: {
+    "checkUpkeep(bytes)": FunctionFragment;
     "enterRaffle()": FunctionFragment;
+    "getCurrentBalance()": FunctionFragment;
     "getEntranceFee()": FunctionFragment;
+    "getInterval()": FunctionFragment;
+    "getLastTimestamp()": FunctionFragment;
+    "getNumWords()": FunctionFragment;
     "getPlayer(uint256)": FunctionFragment;
+    "getPlayerCount()": FunctionFragment;
+    "getRaffleState()": FunctionFragment;
     "getRecentWinner()": FunctionFragment;
+    "getRequestConfirmations()": FunctionFragment;
+    "performUpkeep(bytes)": FunctionFragment;
     "rawFulfillRandomWords(uint256,uint256[])": FunctionFragment;
-    "requestRandomWinner()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "checkUpkeep"
       | "enterRaffle"
+      | "getCurrentBalance"
       | "getEntranceFee"
+      | "getInterval"
+      | "getLastTimestamp"
+      | "getNumWords"
       | "getPlayer"
+      | "getPlayerCount"
+      | "getRaffleState"
       | "getRecentWinner"
+      | "getRequestConfirmations"
+      | "performUpkeep"
       | "rawFulfillRandomWords"
-      | "requestRandomWinner"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "checkUpkeep",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(
     functionFragment: "enterRaffle",
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getCurrentBalance",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getEntranceFee",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getInterval",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLastTimestamp",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getNumWords",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -61,37 +97,81 @@ export interface RaffleInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getPlayerCount",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRaffleState",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getRecentWinner",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRequestConfirmations",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "performUpkeep",
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "rawFulfillRandomWords",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>[]]
   ): string;
-  encodeFunctionData(
-    functionFragment: "requestRandomWinner",
-    values?: undefined
-  ): string;
 
   decodeFunctionResult(
+    functionFragment: "checkUpkeep",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "enterRaffle",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCurrentBalance",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getEntranceFee",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getInterval",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getLastTimestamp",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getNumWords",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getPlayer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getPlayerCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRaffleState",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getRecentWinner",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "rawFulfillRandomWords",
+    functionFragment: "getRequestConfirmations",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "requestRandomWinner",
+    functionFragment: "performUpkeep",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "rawFulfillRandomWords",
     data: BytesLike
   ): Result;
 
@@ -158,42 +238,86 @@ export interface Raffle extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    checkUpkeep(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean, string] & { upkeepNeeded: boolean }>;
+
     enterRaffle(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    getCurrentBalance(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getEntranceFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getInterval(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getLastTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getNumWords(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getPlayer(
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getPlayerCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getRaffleState(overrides?: CallOverrides): Promise<[number]>;
+
     getRecentWinner(overrides?: CallOverrides): Promise<[string]>;
+
+    getRequestConfirmations(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    performUpkeep(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     rawFulfillRandomWords(
       requestId: PromiseOrValue<BigNumberish>,
       randomWords: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    requestRandomWinner(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
   };
+
+  checkUpkeep(
+    arg0: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<[boolean, string] & { upkeepNeeded: boolean }>;
 
   enterRaffle(
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  getCurrentBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
   getEntranceFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getInterval(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getLastTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getNumWords(overrides?: CallOverrides): Promise<BigNumber>;
 
   getPlayer(
     index: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getRaffleState(overrides?: CallOverrides): Promise<number>;
+
   getRecentWinner(overrides?: CallOverrides): Promise<string>;
+
+  getRequestConfirmations(overrides?: CallOverrides): Promise<BigNumber>;
+
+  performUpkeep(
+    arg0: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   rawFulfillRandomWords(
     requestId: PromiseOrValue<BigNumberish>,
@@ -201,29 +325,47 @@ export interface Raffle extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  requestRandomWinner(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
+    checkUpkeep(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean, string] & { upkeepNeeded: boolean }>;
+
     enterRaffle(overrides?: CallOverrides): Promise<void>;
 
+    getCurrentBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
     getEntranceFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getInterval(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getLastTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getNumWords(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPlayer(
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
+    getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRaffleState(overrides?: CallOverrides): Promise<number>;
+
     getRecentWinner(overrides?: CallOverrides): Promise<string>;
+
+    getRequestConfirmations(overrides?: CallOverrides): Promise<BigNumber>;
+
+    performUpkeep(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     rawFulfillRandomWords(
       requestId: PromiseOrValue<BigNumberish>,
       randomWords: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
-
-    requestRandomWinner(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -248,51 +390,93 @@ export interface Raffle extends BaseContract {
   };
 
   estimateGas: {
+    checkUpkeep(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     enterRaffle(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    getCurrentBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
     getEntranceFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getInterval(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getLastTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getNumWords(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPlayer(
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRaffleState(overrides?: CallOverrides): Promise<BigNumber>;
+
     getRecentWinner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRequestConfirmations(overrides?: CallOverrides): Promise<BigNumber>;
+
+    performUpkeep(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     rawFulfillRandomWords(
       requestId: PromiseOrValue<BigNumberish>,
       randomWords: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    requestRandomWinner(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    checkUpkeep(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     enterRaffle(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    getCurrentBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getEntranceFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getInterval(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getLastTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getNumWords(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPlayer(
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getPlayerCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getRaffleState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getRecentWinner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getRequestConfirmations(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    performUpkeep(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     rawFulfillRandomWords(
       requestId: PromiseOrValue<BigNumberish>,
       randomWords: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    requestRandomWinner(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

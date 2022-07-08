@@ -6,6 +6,8 @@ export type { chainlink };
 import type * as contracts from "./contracts";
 export type { contracts };
 export * as factories from "./factories";
+export type { KeeperCompatibleInterface } from "./@chainlink/contracts/src/v0.8/interfaces/KeeperCompatibleInterface";
+export { KeeperCompatibleInterface__factory } from "./factories/@chainlink/contracts/src/v0.8/interfaces/KeeperCompatibleInterface__factory";
 export type { VRFCoordinatorV2Interface } from "./@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface";
 export { VRFCoordinatorV2Interface__factory } from "./factories/@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface__factory";
 export type { VRFConsumerBaseV2 } from "./@chainlink/contracts/src/v0.8/VRFConsumerBaseV2";
