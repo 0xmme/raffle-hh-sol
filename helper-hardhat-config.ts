@@ -1,6 +1,15 @@
+/* eslint-disable node/no-unpublished-import */
+import { BigNumber } from "ethers";
+import { ethers } from "hardhat";
+
 export interface networkConfigItem {
-  ethUsdPriceFeed?: string;
+  vrfCoordinatorV2?: String;
   blockConfirmations?: number;
+  entranceFee?: BigNumber;
+  gasLane?: String;
+  subscriptionId?: number;
+  callbackGasLimit?: number;
+  raffleInterval?: number;
 }
 
 export interface networkConfigInfo {
@@ -8,16 +17,33 @@ export interface networkConfigInfo {
 }
 
 export const networkConfig: networkConfigInfo = {
-  localhost: {},
-  hardhat: {},
-  // Price Feed Address, values can be obtained at https://docs.chain.link/docs/reference-contracts
-  // Default one is ETH/USD contract on Kovan
-  rinkeby: {
-    ethUsdPriceFeed: "0x8a753747a1fa494ec906ce90e9f37563a8af630e",
-    blockConfirmations: 6,
+  localhost: {
+    blockConfirmations: 1,
+    entranceFee: ethers.utils.parseEther("1"),
+    gasLane:
+      "0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc",
+    subscriptionId: 0,
+    callbackGasLimit: 500000,
+    raffleInterval: 30,
   },
-  polygon: {
-    ethUsdPriceFeed: "0xF9680D99D6C9589e2a93a78A04A279e509205945",
+  hardhat: {
+    blockConfirmations: 1,
+    entranceFee: ethers.utils.parseEther("1"),
+    gasLane:
+      "0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc",
+    subscriptionId: 0,
+    callbackGasLimit: 500000,
+    raffleInterval: 30,
+  },
+  rinkeby: {
+    vrfCoordinatorV2: "0x6168499c0cFfCaCD319c818142124B7A15E857ab",
+    blockConfirmations: 6,
+    entranceFee: ethers.utils.parseEther("0.01"),
+    gasLane:
+      "0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc",
+    subscriptionId: 0,
+    callbackGasLimit: 500000,
+    raffleInterval: 30,
   },
 };
 
