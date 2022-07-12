@@ -48,6 +48,11 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
             const lastAddedPlayer: Address = await raffle.getPlayer(0);
             assert.equal(lastAddedPlayer, deployer);
           });
+          it("should emit an event when a player enters the raffle", async () => {
+            await expect(
+              raffle.enterRaffle({ value: raffleEntranceFee })
+            ).to.emit(raffle, "RaffleEnter");
+          });
         });
       });
     });
