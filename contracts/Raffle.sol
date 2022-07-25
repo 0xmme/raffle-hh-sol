@@ -136,9 +136,9 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
             revert Raffle__TransferToWinnerFailed();
         }
         emit WinnerPicked(s_RecentWinner);
-        s_RaffleState = RaffleState.OPEN;
         s_Players = new address payable[](0);
         s_LastTimestamp = block.timestamp;
+        s_RaffleState = RaffleState.OPEN;
     }
 
     /* view / pure functions */

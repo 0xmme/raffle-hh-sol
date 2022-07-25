@@ -16,6 +16,7 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
       let vrfCoordinatorV2Mock: VRFCoordinatorV2Mock;
       let deployer: Address;
       let raffleEntranceFee: BigNumber;
+      let raffleInterval: BigNumber;
 
       beforeEach(async () => {
         deployer = (await getNamedAccounts()).deployer;
@@ -29,30 +30,58 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
       describe("constructor", () => {
         it("creates a proper Raffle contract", async () => {
           const raffleState: number = await raffle.getRaffleState();
-          const raffleInterval: BigNumber = await raffle.getInterval();
+          raffleInterval = await raffle.getInterval();
           raffleEntranceFee = await raffle.getEntranceFee();
           assert.equal(raffleState.toString(), "0");
           assert.equal(
             raffleInterval.toString(),
-            networkConfig[network.name].raffleInterval?.toString()
+            networkConfig[network.name].raffleInterval!.toString()
           );
         });
-        describe("enterRaffle", () => {
-          it("should revert, if too less ETH sent when trying to enter the raffle", async () => {
-            await expect(raffle.enterRaffle()).to.be.revertedWith(
-              "Raffle__NotEnoughEthEntered()"
-            );
-          });
-          it("should be able to record a user when entering the raffle", async () => {
-            await raffle.enterRaffle({ value: raffleEntranceFee });
-            const lastAddedPlayer: Address = await raffle.getPlayer(0);
-            assert.equal(lastAddedPlayer, deployer);
-          });
-          it("should emit an event when a player enters the raffle", async () => {
-            await expect(
-              raffle.enterRaffle({ value: raffleEntranceFee })
-            ).to.emit(raffle, "RaffleEnter");
-          });
+      });
+      describe("enterRaffle", () => {
+        it("should revert, if too less ETH sent when trying to enter the raffle", async () => {
+          await expect(raffle.enterRaffle()).to.be.revertedWith(
+            "Raffle__NotEnoughEthEntered()"
+          );
+        });
+        it("should be able to record a user when entering the raffle", async () => {
+          await raffle.enterRaffle({ value: raffleEntranceFee });
+          const lastAddedPlayer: Address = await raffle.getPlayer(0);
+          assert.equal(lastAddedPlayer, deployer);
+        });
+        it("should emit an event when a player enters the raffle", async () => {
+          await expect(
+            raffle.enterRaffle({ value: raffleEntranceFee })
+          ).to.emit(raffle, "RaffleEnter");
+        });
+        it("doesn't allow enter when raffle is not open", async () => {
+          await raffle.enterRaffle({ value: raffleEntranceFee });
+          await network.provider.send("evm_increaseTime", [
+            raffleInterval.toNumber() + 1,
+          ]);
+          await network.provider.send("evm_mine", []);
+          await raffle.performUpkeep([]);
+          await expect(
+            raffle.enterRaffle({ value: raffleEntranceFee })
+          ).to.be.revertedWith("Raffle__RaffleNotOpen()");
+        });
+      });
+      describe("checkUpkeep", () => {
+        it("should return false, if people haven't send enough ETH", async () => {
+          await network.provider.send("evm_increaseTime", [
+            raffleInterval.toNumber() + 1,
+          ]);
+          await network.provider.send("evm_mine", []);
+          const { upkeepNeeded } = await raffle.callStatic.checkUpkeep([]);
+          assert(!upkeepNeeded);
+        });
+        it("should return false, if raffle state is not open", async () => {
+          await raffle.enterRaffle({ value: raffleEntranceFee });
+          await network.provider.send("evm_increaseTime", [
+            raffleInterval.toNumber() + 1,
+          ]);
+          await network.provider.send("evm_mine", []);
         });
       });
     });
