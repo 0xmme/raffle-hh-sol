@@ -195,6 +195,7 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
           const startTimestamp = await raffle.getLastTimestamp();
           await new Promise<void>(async function (resolve, reject) {
             raffle.once("WinnerPicked", async () => {
+              console.log("WinnerPicked Event triggered...");
               try {
                 const recentWinner = await raffle.getRecentWinner();
                 const raffleState = await raffle.getRaffleState();
@@ -211,7 +212,7 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
                 assert.equal(playerCount.toString(), "0");
                 assert.equal(raffleState.toString(), "0");
                 assert(endTimestamp > startTimestamp);
-                // expect(winnerEndBal.gt(winnerStartBal)).to.be.true; // hardhat-ethers bignumber test, but not on the target balance
+                // await expect(winnerEndBal.gt(winnerStartBal)).to.be.true; // hardhat-ethers bignumber test, but not on the target balance
                 assert.equal(
                   winnerEndBal.toString(),
                   winnerStartBal
