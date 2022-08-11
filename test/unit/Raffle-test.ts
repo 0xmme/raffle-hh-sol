@@ -1,7 +1,9 @@
+/* eslint-disable no-async-promise-executor */
 /* eslint-disable no-unused-vars */
 /* eslint-disable node/no-missing-import */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-expressions */
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { assert, expect } from "chai";
 import { BigNumber, ContractReceipt } from "ethers";
 import { ethers, network, deployments, getNamedAccounts } from "hardhat";
@@ -155,6 +157,84 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
           const raffleState = await raffle.getRaffleState();
           assert(raffleState.toString() === "1");
           assert(requestId.toNumber() > 0);
+        });
+      });
+
+      describe("fulfillRandomwords", () => {
+        beforeEach(async () => {
+          await raffle.enterRaffle({ value: raffleEntranceFee });
+          await network.provider.send("evm_increaseTime", [
+            raffleInterval.toNumber() + 1,
+          ]);
+          await network.provider.send("evm_mine", []);
+        });
+
+        it("should only be executable after performUpkeep is called", async () => {
+          await expect(
+            vrfCoordinatorV2Mock.fulfillRandomWords(0, raffle.address)
+          ).to.be.revertedWith("nonexistent request");
+          await expect(
+            vrfCoordinatorV2Mock.fulfillRandomWords(1, raffle.address)
+          ).to.be.revertedWith("nonexistent request");
+        });
+
+        it("should pick a winner, reset the raffle and send the money", async () => {
+          const additionalParticipants: number = 3;
+          const startingAccountIndex: number = 1; // deployer = 0
+          const accountsArr: SignerWithAddress[] = await ethers.getSigners();
+          for (
+            let i = startingAccountIndex;
+            i < additionalParticipants + startingAccountIndex;
+            i++
+          ) {
+            raffle = await raffle.connect(accountsArr[i]);
+            await raffle.enterRaffle({
+              value: raffleEntranceFee,
+            });
+          }
+          const startTimestamp = await raffle.getLastTimestamp();
+          await new Promise<void>(async function (resolve, reject) {
+            raffle.once("WinnerPicked", async () => {
+              try {
+                const recentWinner = await raffle.getRecentWinner();
+                const raffleState = await raffle.getRaffleState();
+                const endTimestamp = await raffle.getLastTimestamp();
+                const playerCount = await raffle.getPlayerCount();
+                const winnerEndBal = await accountsArr[1].getBalance(); // i know that arr[1] wins through prev test
+
+                console.log(recentWinner);
+                console.log(accountsArr[0].address);
+                console.log(accountsArr[1].address);
+                console.log(accountsArr[2].address);
+                console.log(accountsArr[3].address);
+
+                assert.equal(playerCount.toString(), "0");
+                assert.equal(raffleState.toString(), "0");
+                assert(endTimestamp > startTimestamp);
+                // expect(winnerEndBal.gt(winnerStartBal)).to.be.true; // hardhat-ethers bignumber test, but not on the target balance
+                assert.equal(
+                  winnerEndBal.toString(),
+                  winnerStartBal
+                    .add(
+                      raffleEntranceFee
+                        .mul(additionalParticipants)
+                        .add(raffleEntranceFee)
+                    )
+                    .toString()
+                );
+                resolve();
+              } catch (error) {
+                reject(error);
+              }
+            });
+            const winnerStartBal = await accountsArr[1].getBalance(); // i know that arr[1] wins through prev test
+            const txResponse = await raffle.performUpkeep([]);
+            const txReceipt = await txResponse.wait(1);
+            await vrfCoordinatorV2Mock.fulfillRandomWords(
+              txReceipt!.events![1].args!.requestId,
+              raffle.address
+            );
+          });
         });
       });
     });
