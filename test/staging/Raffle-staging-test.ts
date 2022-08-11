@@ -5,7 +5,7 @@
 /* eslint-disable no-unused-expressions */
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { assert, expect } from "chai";
-import { BigNumber, ContractReceipt } from "ethers";
+import { BigNumber, ContractReceipt, ContractTransaction } from "ethers";
 import { ethers, network, deployments, getNamedAccounts } from "hardhat";
 import { Address } from "hardhat-deploy/types";
 import { devChains, networkConfig } from "../../helper-hardhat-config";
@@ -26,18 +26,18 @@ devChains.includes(network.name)
 
       describe("fulfillRandomwords", () => {
         it("should work with live Chainlink Keepers & VRF, picks a winner", async () => {
-          const startTimestamp = await raffle.getLastTimestamp();
-          const accounts = await ethers.getSigners();
-          const deployer = accounts[0];
+          const startTimestamp: BigNumber = await raffle.getLastTimestamp();
+          const accounts: SignerWithAddress[] = await ethers.getSigners();
+          const deployer: SignerWithAddress = accounts[0];
 
           await new Promise<void>(async function (resolve, reject) {
             raffle.once("WinnerPicked", async () => {
               console.log("WinnerPicked Event triggered...");
               try {
-                const recentWinner = await raffle.getRecentWinner();
-                const raffleState = await raffle.getRaffleState();
-                const endTimestamp = await raffle.getLastTimestamp();
-                const winnerEndBal = await deployer.getBalance();
+                const recentWinner: Address = await raffle.getRecentWinner();
+                const raffleState: number = await raffle.getRaffleState();
+                const endTimestamp: BigNumber = await raffle.getLastTimestamp();
+                const winnerEndBal: BigNumber = await deployer.getBalance();
 
                 console.log(recentWinner);
 
@@ -55,9 +55,11 @@ devChains.includes(network.name)
               }
             });
             await raffle.enterRaffle({ value: raffleEntranceFee });
-            const txResponse = await raffle.performUpkeep([]);
-            const txReceipt = await txResponse.wait(1);
-            const winnerStartBal = await deployer.getBalance();
+            const txResponse: ContractTransaction = await raffle.performUpkeep(
+              []
+            );
+            const txReceipt: ContractReceipt = await txResponse.wait(1);
+            const winnerStartBal: BigNumber = await deployer.getBalance();
           });
         });
       });

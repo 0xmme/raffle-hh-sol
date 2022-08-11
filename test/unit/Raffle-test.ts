@@ -5,9 +5,9 @@
 /* eslint-disable no-unused-expressions */
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { assert, expect } from "chai";
-import { BigNumber, ContractReceipt } from "ethers";
+import { BigNumber, ContractReceipt, ContractTransaction } from "ethers";
 import { ethers, network, deployments, getNamedAccounts } from "hardhat";
-import { Address } from "hardhat-deploy/types";
+import { Address, Receipt } from "hardhat-deploy/types";
 import { devChains, networkConfig } from "../../helper-hardhat-config";
 import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
 
@@ -92,7 +92,7 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
           ]);
           await network.provider.send("evm_mine", []);
           await raffle.performUpkeep([]);
-          const raffleState = raffle.getRaffleState();
+          const raffleState: number = await raffle.getRaffleState();
           const { upkeepNeeded } = await raffle.callStatic.checkUpkeep([]);
           assert.equal((await raffleState).toString(), "1");
           assert.equal(upkeepNeeded, false);
@@ -100,16 +100,16 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
 
         it("should return false, if not enough time has passed", async () => {
           await raffle.enterRaffle({ value: raffleEntranceFee });
-          const blockNumBefore = await ethers.provider.getBlockNumber();
+          const blockNumBefore: number = await ethers.provider.getBlockNumber();
           const blockBefore = await ethers.provider.getBlock(blockNumBefore);
-          const timestampBefore = blockBefore.timestamp;
+          const timestampBefore: number = blockBefore.timestamp;
           await network.provider.send("evm_increaseTime", [
             raffleInterval.toNumber() - 1,
           ]);
           await network.provider.send("evm_mine", []);
-          const blockNumNow = await ethers.provider.getBlockNumber();
+          const blockNumNow: number = await ethers.provider.getBlockNumber();
           const blockNow = await ethers.provider.getBlock(blockNumNow);
-          const timestampNow = blockNow.timestamp;
+          const timestampNow: number = blockNow.timestamp;
           expect(timestampNow - timestampBefore).is.lessThan(
             raffleInterval.toNumber()
           );
@@ -141,7 +141,9 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
             raffleInterval.toNumber() + 1,
           ]);
           await network.provider.send("evm_mine", []);
-          const txResponse = await raffle.performUpkeep([]);
+          const txResponse: ContractTransaction = await raffle.performUpkeep(
+            []
+          );
           assert(txResponse);
         });
 
@@ -151,10 +153,12 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
             raffleInterval.toNumber() + 1,
           ]);
           await network.provider.send("evm_mine", []);
-          const txResponse = await raffle.performUpkeep([]);
+          const txResponse: ContractTransaction = await raffle.performUpkeep(
+            []
+          );
           const txReceipt: ContractReceipt = await txResponse.wait(1);
           const requestId: BigNumber = txReceipt!.events![1].args!.requestId;
-          const raffleState = await raffle.getRaffleState();
+          const raffleState: number = await raffle.getRaffleState();
           assert(raffleState.toString() === "1");
           assert(requestId.toNumber() > 0);
         });
@@ -192,16 +196,17 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
               value: raffleEntranceFee,
             });
           }
-          const startTimestamp = await raffle.getLastTimestamp();
+          const startTimestamp: BigNumber = await raffle.getLastTimestamp();
           await new Promise<void>(async function (resolve, reject) {
             raffle.once("WinnerPicked", async () => {
               console.log("WinnerPicked Event triggered...");
               try {
-                const recentWinner = await raffle.getRecentWinner();
-                const raffleState = await raffle.getRaffleState();
-                const endTimestamp = await raffle.getLastTimestamp();
-                const playerCount = await raffle.getPlayerCount();
-                const winnerEndBal = await accountsArr[1].getBalance(); // i know that arr[1] wins through prev test
+                const recentWinner: Address = await raffle.getRecentWinner();
+                const raffleState: number = await raffle.getRaffleState();
+                const endTimestamp: BigNumber = await raffle.getLastTimestamp();
+                const playerCount: BigNumber = await raffle.getPlayerCount();
+                const winnerEndBal: BigNumber =
+                  await accountsArr[1].getBalance(); // i know that arr[1] wins through prev test
 
                 console.log(recentWinner);
                 console.log(accountsArr[0].address);
@@ -228,9 +233,11 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
                 reject(error);
               }
             });
-            const winnerStartBal = await accountsArr[1].getBalance(); // i know that arr[1] wins through prev test
-            const txResponse = await raffle.performUpkeep([]);
-            const txReceipt = await txResponse.wait(1);
+            const winnerStartBal: BigNumber = await accountsArr[1].getBalance(); // i know that arr[1] wins through prev test
+            const txResponse: ContractTransaction = await raffle.performUpkeep(
+              []
+            );
+            const txReceipt: ContractReceipt = await txResponse.wait(1);
             await vrfCoordinatorV2Mock.fulfillRandomWords(
               txReceipt!.events![1].args!.requestId,
               raffle.address
