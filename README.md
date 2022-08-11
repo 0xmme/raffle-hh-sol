@@ -69,7 +69,10 @@
 
 <!--[![Product Name Screen Shot][product-screenshot]](https://example.com)-->
 
-This is a project for a raffle / lottery on solidity for the ethereum blockchain. I made it with Hardhat and therefore this project will consist of the contracts, the deployment scripts and the mocha/chai tests.
+This is a project for a raffle / lottery on solidity for the ethereum blockchain. I made it with Hardhat and therefore this project consists of the contracts, the deployment scripts and the mocha/chai tests.
+So far I made some unit tests and a staging test with Typescript.
+A deployed sample of the contract can be found on Rinkeby:
+[0xbAEd8d15fC5c831966d94A111e736980E13Eb1de](https://rinkeby.etherscan.io/address/0xbAEd8d15fC5c831966d94A111e736980E13Eb1de)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -156,7 +159,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 ## Contact
 
-Your Name - [@mme022](https://twitter.com/mme022) - meinert@protonmail.com
+Manuel Meinert - [@mme022](https://twitter.com/mme022) - meinert@protonmail.com
 
 Project Link: [https://github.com/mme022/raffle-hh-sol](https://github.com/mme022/raffle-hh-sol)
 
