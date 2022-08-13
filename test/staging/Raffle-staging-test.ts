@@ -31,6 +31,8 @@ devChains.includes(network.name)
           const deployer: SignerWithAddress = accounts[0];
 
           await new Promise<void>(async function (resolve, reject) {
+            const winnerStartBal: BigNumber = await deployer.getBalance();
+
             raffle.once("WinnerPicked", async () => {
               console.log("WinnerPicked Event triggered...");
               try {
@@ -41,8 +43,11 @@ devChains.includes(network.name)
 
                 console.log(recentWinner);
 
-                await expect(raffle.getPlayer(0)).to.be.reverted;
-                assert.equal(recentWinner, deployer.address);
+                // await expect(raffle.getPlayer(0)).to.be.reverted;
+                assert.equal(
+                  recentWinner.toString(),
+                  deployer.address.toString()
+                );
                 assert.equal(raffleState, 0);
                 assert.equal(
                   winnerStartBal,
@@ -59,7 +64,6 @@ devChains.includes(network.name)
               []
             );
             const txReceipt: ContractReceipt = await txResponse.wait(1);
-            const winnerStartBal: BigNumber = await deployer.getBalance();
           });
         });
       });

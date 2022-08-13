@@ -73,6 +73,7 @@ This is a project for a raffle / lottery on solidity for the ethereum blockchain
 So far I made some unit tests and a staging test with Typescript.
 A deployed sample of the contract can be found on Rinkeby:
 [0xbAEd8d15fC5c831966d94A111e736980E13Eb1de](https://rinkeby.etherscan.io/address/0xbAEd8d15fC5c831966d94A111e736980E13Eb1de)
+Maybe when Chainlink VRF and Keepers support Goerli I will make a test with this contract there.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
