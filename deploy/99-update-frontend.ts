@@ -31,11 +31,31 @@ const updateContractAddresses = async () => {
 
 const updateAbi = async () => {
   const RaffleContract: Raffle = await ethers.getContract("Raffle");
-  const abi = RaffleContract.interface.format(ethers.utils.FormatTypes.json);
+  // const abi = RaffleContract.interface.format(ethers.utils.FormatTypes.json);
+  const abi: string = await getAbiFromBuild();
   if (typeof abi === "string") {
     fs.writeFileSync(contractAbiFile, abi);
   }
 };
+
+async function getAbiFromBuild(): Promise<string> {
+  console.log("Reading ABI ...");
+  const lotteryPath = "artifacts/contracts/Raffle.sol/Raffle.json";
+  return new Promise<string>((resolve, reject) => {
+    fs.readFile(lotteryPath, "utf-8", (err, data) => {
+      if (err) {
+        console.log(err);
+        reject(err);
+      } else {
+        console.log("Parsing ABI ...");
+        const obj = JSON.parse(data);
+        const abi = JSON.stringify(obj.abi);
+        console.log(obj.abi);
+        resolve(abi);
+      }
+    });
+  });
+}
 
 const updateFrontend = async () => {
   if (process.env.UPDATE_FRONTEND) {
